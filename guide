@@ -1,0 +1,9 @@
+Edit X:gozen/\+Errors: 1,$d
+X:gozen/.*\.go: w
+
+go test 
+go build
+
+# Can't I add this to the autosave stuff above. In some clever
+# way.
+gofmt -w -s .

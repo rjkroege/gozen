@@ -1,3 +1,4 @@
+# Good morning functions
 Useful Go functions (based on the fact that I've needed them in more than one
 project.)
 

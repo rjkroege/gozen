@@ -10,6 +10,7 @@ import (
 
 // Editinacme directly opens plumbstring in Acme/Edwood because regular
 // plumb can't handle the paths found in the Go package database.
+// Note that paths in plumbstring need to be absolute.
 func Editinacme(plumbstring string) error {
 	chunks := strings.Split(plumbstring, ":")
 	if len(chunks) > 2 {

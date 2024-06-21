@@ -29,7 +29,6 @@ func Editinacme(plumbstring string) error {
 		return fmt.Errorf("plumbhelper acme.Windows")
 	}
 
-	// TODO(rjk): Consider using Show.
 	win := (*acme.Win)(nil)
 	for _, wi := range wins {
 		// log.Println("wi", wi.Name)
@@ -44,28 +43,30 @@ func Editinacme(plumbstring string) error {
 
 	if win == nil {
 		log.Println("plumbhelper making a new window")
+		var err error
 		win, err = acme.New()
 		if err != nil {
 			return fmt.Errorf("plumbhelper acme.New: %v", err)
 		}
 
-		err = win.Ctl("nomark")
-		if err := win.Name(fn); err != nil {
-			return fmt.Errorf("plumbhelper win.Ctl get: %v", err)
+		if err := win.Ctl("nomark"); err != nil {
+			return fmt.Errorf("plumbhelper win.Ctl nomark: %v", err)
 		}
 
 		if err := win.Name(fn); err != nil {
 			return fmt.Errorf("plumbhelper win.Name: %v", err)
 		}
 
-		// Forces Acme/Edwood to load the file specified in Name
-		err = win.Ctl("get")
-		if err := win.Name(fn); err != nil {
+		if err := win.Ctl("get"); err != nil {
 			return fmt.Errorf("plumbhelper win.Ctl get: %v", err)
 		}
 
-		if err = win.Ctl("clean\nmark"); err != nil {
-			return fmt.Errorf("plumbhelper %q: %v", "clean\nmark", err)
+		if err = win.Ctl("mark"); err != nil {
+			return fmt.Errorf("plumbhelper %q: %v", "mark", err)
+		}
+
+		if err = win.Ctl("clean"); err != nil {
+			return fmt.Errorf("plumbhelper %q: %v", "clean", err)
 		}
 	}
 

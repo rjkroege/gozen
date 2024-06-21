@@ -29,9 +29,10 @@ func Editinacme(plumbstring string) error {
 		return fmt.Errorf("plumbhelper acme.Windows")
 	}
 
+	// TODO(rjk): Consider using Show.
 	win := (*acme.Win)(nil)
 	for _, wi := range wins {
-		log.Println("wi", wi.Name)
+		// log.Println("wi", wi.Name)
 		if wi.Name == fn {
 			win, err = acme.Open(wi.ID, nil)
 			if err != nil {
@@ -48,6 +49,11 @@ func Editinacme(plumbstring string) error {
 			return fmt.Errorf("plumbhelper acme.New: %v", err)
 		}
 
+		err = win.Ctl("nomark")
+		if err := win.Name(fn); err != nil {
+			return fmt.Errorf("plumbhelper win.Ctl get: %v", err)
+		}
+
 		if err := win.Name(fn); err != nil {
 			return fmt.Errorf("plumbhelper win.Name: %v", err)
 		}
@@ -58,13 +64,9 @@ func Editinacme(plumbstring string) error {
 			return fmt.Errorf("plumbhelper win.Ctl get: %v", err)
 		}
 
-		if err := win.Addr(string(addr)); err != nil {
-			return fmt.Errorf("plumbhelper win.Addr: %v", err)
+		if err = win.Ctl("clean\nmark"); err != nil {
+			return fmt.Errorf("plumbhelper %q: %v", "clean\nmark", err)
 		}
-		if err := win.Ctl("dot=addr\nclean\nshow"); err != nil {
-			return fmt.Errorf("plumbhelper win.Addr: %v", err)
-		}
-		return nil
 	}
 
 	if err := win.Addr(string(addr)); err != nil {

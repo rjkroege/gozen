@@ -1,6 +1,7 @@
 package gozen
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -11,7 +12,7 @@ import (
 // Editinacme directly opens plumbstring in Acme/Edwood because regular
 // plumb can't handle the paths found in the Go package database.
 // Note that paths in plumbstring need to be absolute.
-func Editinacme(plumbstring string) error {
+func Editinacme(plumbstring string, opts ...option) error {
 	chunks := strings.Split(plumbstring, ":")
 	if len(chunks) > 2 {
 		return fmt.Errorf("plumbhelper bad plumb address string")
@@ -77,5 +78,13 @@ func Editinacme(plumbstring string) error {
 		return fmt.Errorf("plumbhelper win.Addr: %v", err)
 	}
 
-	return nil
+	// This general structure permits (I think) adding an arbitrary number of
+	// additional customization settings (e.g. setting the dump command or
+	// the like.)
+	allerrs := make([]error, 0)
+	for _, opt := range opts {
+		allerrs = append(allerrs, opt(win))
+	}
+
+	return errors.Join(allerrs...)
 }

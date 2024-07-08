@@ -8,13 +8,16 @@ import (
 // I have written the simplest possible code that I need _now_. It is conceivable
 // that I want something more sophisticated like https://golang.design/research/generic-option/#fn:1
 
-type option func(*acme.Win) error
+type option func(*acme.Win, bool) error
 
 // Addtotag returns an option for Editinacme that adds the provided string
 // to the Acme/Edwood tag.
 func Addtotag(v string) option {
-	return func(w *acme.Win) error {
+	return func(w *acme.Win, wasnew bool) error {
 		// capture v in a closure.
-		return w.Fprintf("tag", v)
+		if wasnew {
+			return w.Fprintf("tag", v)
+		}
+		return nil
 	}
 }

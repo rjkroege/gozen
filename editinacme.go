@@ -42,8 +42,10 @@ func Editinacme(plumbstring string, opts ...option) error {
 		}
 	}
 
+	wasnew := false
 	if win == nil {
 		log.Println("plumbhelper making a new window")
+		wasnew = true
 		var err error
 		win, err = acme.New()
 		if err != nil {
@@ -83,7 +85,7 @@ func Editinacme(plumbstring string, opts ...option) error {
 	// the like.)
 	allerrs := make([]error, 0)
 	for _, opt := range opts {
-		allerrs = append(allerrs, opt(win))
+		allerrs = append(allerrs, opt(win, wasnew))
 	}
 
 	return errors.Join(allerrs...)

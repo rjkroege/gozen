@@ -1,6 +1,8 @@
 package gozen
 
 import (
+	"time"
+
 	"9fans.net/go/acme"
 )
 
@@ -18,6 +20,18 @@ func Addtotag(v string) option {
 		if wasnew {
 			return w.Fprintf("tag", v)
 		}
+		return nil
+	}
+}
+
+// Blinktag returns an option for Editinacme that blinks the window tag.
+// TODO(rjk): Could conceivably configure the blink time?
+func Blinktag(_ string) option {
+	return func(w *acme.Win, wasnew bool) error {
+		stopper := w.Blink()
+		waiter := time.NewTimer(5 * time.Second)
+		<-waiter.C
+		stopper()
 		return nil
 	}
 }

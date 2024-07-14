@@ -20,5 +20,5 @@ func main() {
 		log.Fatalf("can't abs %q: %v", flag.Arg(0), err)
 	}
 
-	gozen.Editinacme(ap, gozen.Addtotag("hello, added with b"))
+	gozen.Editinacme(ap, gozen.Addtotag("hello, added with b"), gozen.Blinktag(""))
 }

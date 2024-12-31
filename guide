@@ -7,3 +7,9 @@ go build
 # Can't I add this to the autosave stuff above. In some clever
 # way.
 gofmt -w -s .
+
+go build ./_examples/b
+./b _examples/b/bubble
+
+go build ./_examples/logtowin
+echo 'blah blah' | ./logtowin 

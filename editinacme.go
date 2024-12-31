@@ -9,13 +9,12 @@ import (
 	"9fans.net/go/acme"
 )
 
-// Editinacme directly opens plumbstring in Acme/Edwood because regular
-// plumb can't handle the paths found in the Go package database.
-// Note that paths in plumbstring need to be absolute.
-func Editinacme(plumbstring string, opts ...option) error {
+// Editinwin creates or opens plumbstring as needed and returns the window
+// object.
+func Editinwin(plumbstring string, opts ...option) (*acme.Win, error) {
 	chunks := strings.Split(plumbstring, ":")
 	if len(chunks) > 2 {
-		return fmt.Errorf("plumbhelper bad plumb address string")
+		return nil, fmt.Errorf("plumbhelper bad plumb address string")
 	}
 	fn := chunks[0]
 	addr := ""
@@ -27,16 +26,16 @@ func Editinacme(plumbstring string, opts ...option) error {
 	// Two choices: we already have the Window open.
 	wins, err := acme.Windows()
 	if err != nil {
-		return fmt.Errorf("plumbhelper acme.Windows")
+		return nil, fmt.Errorf("plumbhelper acme.Windows list was not available")
 	}
 
 	win := (*acme.Win)(nil)
 	for _, wi := range wins {
-		// log.Println("wi", wi.Name)
+		log.Println("wi", wi.Name)
 		if wi.Name == fn {
 			win, err = acme.Open(wi.ID, nil)
 			if err != nil {
-				return fmt.Errorf("plumbhelper acme.Open")
+				return nil, fmt.Errorf("plumbhelper acme.Open")
 			}
 			break
 		}
@@ -49,35 +48,35 @@ func Editinacme(plumbstring string, opts ...option) error {
 		var err error
 		win, err = acme.New()
 		if err != nil {
-			return fmt.Errorf("plumbhelper acme.New: %v", err)
+			return nil, fmt.Errorf("plumbhelper acme.New: %v", err)
 		}
 
 		if err := win.Ctl("nomark"); err != nil {
-			return fmt.Errorf("plumbhelper win.Ctl nomark: %v", err)
+			return nil, fmt.Errorf("plumbhelper win.Ctl nomark: %v", err)
 		}
 
 		if err := win.Name(fn); err != nil {
-			return fmt.Errorf("plumbhelper win.Name: %v", err)
+			return nil, fmt.Errorf("plumbhelper win.Name: %v", err)
 		}
 
 		if err := win.Ctl("get"); err != nil {
-			return fmt.Errorf("plumbhelper win.Ctl get: %v", err)
+			return nil, fmt.Errorf("plumbhelper win.Ctl get: %v", err)
 		}
 
 		if err = win.Ctl("mark"); err != nil {
-			return fmt.Errorf("plumbhelper %q: %v", "mark", err)
+			return nil, fmt.Errorf("plumbhelper %q: %v", "mark", err)
 		}
 
 		if err = win.Ctl("clean"); err != nil {
-			return fmt.Errorf("plumbhelper %q: %v", "clean", err)
+			return nil, fmt.Errorf("plumbhelper %q: %v", "clean", err)
 		}
 	}
 
 	if err := win.Addr(string(addr)); err != nil {
-		return fmt.Errorf("plumbhelper win.Addr: %v", err)
+		return nil, fmt.Errorf("plumbhelper win.Addr: %v", err)
 	}
 	if err := win.Ctl("dot=addr\nshow\n"); err != nil {
-		return fmt.Errorf("plumbhelper win.Addr: %v", err)
+		return nil, fmt.Errorf("plumbhelper win.Addr: %v", err)
 	}
 
 	// This general structure permits (I think) adding an arbitrary number of
@@ -88,5 +87,13 @@ func Editinacme(plumbstring string, opts ...option) error {
 		allerrs = append(allerrs, opt(win, wasnew))
 	}
 
-	return errors.Join(allerrs...)
+	return win, errors.Join(allerrs...)
+}
+
+// Editinacme directly opens plumbstring in Acme/Edwood because regular
+// plumb can't handle the paths found in the Go package database.
+// Note that paths in plumbstring need to be absolute.
+func Editinacme(plumbstring string, opts ...option) error {
+	_, err := Editinwin(plumbstring, opts...)
+	return err
 }

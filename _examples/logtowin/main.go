@@ -13,12 +13,16 @@ import (
 )
 
 var filename = flag.String("f", "+Log", "the filename in the current directory to update")
+var debug = flag.Bool("d",  false, "set for verbose debugging")
 
 // need a wrapper for win to make it into a writable.
 
 
 func main() {
 	flag.Parse()
+	if !*debug {
+		log.SetOutput(io.Discard)
+	}
 	log.Println("hi", flag.Args())
 
 	// have a single arg

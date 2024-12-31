@@ -20,5 +20,7 @@ func main() {
 		log.Fatalf("can't abs %q: %v", flag.Arg(0), err)
 	}
 
-	gozen.Editinacme(ap, gozen.Addtotag("hello, added with b"), gozen.Blinktag(""))
+	if err := gozen.Editinacme(ap, gozen.Addtotag("hello, added with b"), gozen.Blinktag("")); err != nil {
+		log.Fatalf("Editinacme failed for %s: %v", ap, err)
+	}
 }

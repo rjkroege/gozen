@@ -94,6 +94,7 @@ func Editinwin(plumbstring string, opts ...option) (*acme.Win, error) {
 // plumb can't handle the paths found in the Go package database.
 // Note that paths in plumbstring need to be absolute.
 func Editinacme(plumbstring string, opts ...option) error {
-	_, err := Editinwin(plumbstring, opts...)
+	w, err := Editinwin(plumbstring, opts...)
+	w.CloseFiles()
 	return err
 }
